@@ -1,3 +1,6 @@
-from simulation import simulation
+import simulation
 
-simulation(2)
+nombre_robots = [2, 3, 6, 8, 13]
+
+for x in nombre_robots:
+    simulation.simuler_port(x)
