@@ -116,10 +116,12 @@ df3 = pd.DataFrame(temps_dans_file, columns=['temps_dans_file'])
 df4 = pd.DataFrame(departs, columns=['departs'])
 
 df_length = pd.concat([df1, df2, df3, df4], axis=1)
-df_length2 = pd.concat([df3, df4], axis=1)
+df_length2 = pd.concat([df4, df3], axis=1)
+
+df_length2['moyenne_cumulative_temps_file'] = df_length2['temps_dans_file'].expanding().mean()
+print(df_length2)
 
 df_length['moyenne_cumulative_longueur_file'] = df_length['longueur_file'].expanding().mean()
-df_length['moyenne_cumulative_temps_file'] = df_length['temps_dans_file'].expanding().mean()
 df_length['delta_time'] = df_length['time'].shift(-1) - df_length['time']
 df_length['moyenne_cumulative_occupation_quai'] = round((1-((df_length[df_length['longueur_file'] == 0] ['delta_time'].cumsum()) / df_length['time'])) * 100, 2).expanding().mean()
 
@@ -128,7 +130,6 @@ utilization = server_utilization(df_length)
 
 df_3 = pd.DataFrame(arrivees,   columns = ['arrivées'])
 df_4 = pd.DataFrame(departs, columns = ['départs'])
-df_chart = pd.concat([df_3, df_4], axis = 1)
 
 avg_delay_inqueue = np.mean(temps_dans_file)
 avg_delay_insyst  = np.mean(temps_dans_systeme)
@@ -139,8 +140,8 @@ print('The average number of trucks in queue is %.2f' %  (avg_length))
 print('The utilization of the server is %.2f' % (utilization))
 
 # kpi_1 = plt.figure(1)
-# plt.plot(df_length['time'], df_length['moyenne_cumulative_longueur_file'])
-# plt.title('Moyenne cumulative de la longueur de la file')
+# plt.plot(df_length['time'], df_length[''])
+# plt.title('Nombre de bateaux déchargé')
 
 kpi_2 = plt.figure(2)
 plt.plot(df_length['time'], df_length['moyenne_cumulative_longueur_file'])
@@ -148,13 +149,13 @@ plt.title('Moyenne cumulative de la longueur de la file')
 plt.axvline(x = 20000*60*60, color = 'r', label = 'axvline - full height')
 
 kpi_3 = plt.figure(3)
-plt.plot(df_length['time'], df_length['moyenne_cumulative_temps_file'])
+plt.plot(df_length2['departs'], df_length2['moyenne_cumulative_temps_file'])
 plt.title('Moyenne cumulative du temps d\'attente dans la file')
 plt.axvline(x = 20000*60*60, color = 'r', label = 'axvline - full height')
 
-# kpi_4 = plt.figure(4)
-# plt.plot(df_length['time'], df_length['moyenne_cumulative_occupation_quai'])
-# plt.title('Moyenne cumulative du taux d\'occupation du quai')
-# plt.axvline(x = 20000*60*60, color = 'r', label = 'axvline - full height')
+kpi_4 = plt.figure(4)
+plt.plot(df_length['time'], df_length['moyenne_cumulative_occupation_quai'])
+plt.title('Moyenne cumulative du taux d\'occupation du quai')
+plt.axvline(x = 20000*60*60, color = 'r', label = 'axvline - full height')
 
 plt.show()
