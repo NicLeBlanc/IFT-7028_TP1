@@ -4,7 +4,7 @@ import simpy
 import numpy as np
 import matplotlib.pyplot as plt
 
-np.random.seed(2022)
+# np.random.seed(2022)
 
 t_attente = []
 obs_times = []
@@ -16,6 +16,8 @@ def generate_interarrival():
 
 def generate_activ(tmc):
   return np.random.exponential(tmc*3600)
+
+print(generate_interarrival())
 
 def activ_bat(env,robots,tmc):
   i = 0
