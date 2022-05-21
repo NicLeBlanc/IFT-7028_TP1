@@ -2,8 +2,6 @@ import simpy
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import numpy
-
 
 
 def simuler_port(nb_robots):
@@ -20,14 +18,14 @@ def simuler_port(nb_robots):
 
     # Fonction de temps d'inter arrivée des bateaux
     def inter_arrival_time_boat():
-        result = numpy.random.exponential(moyenne_inter_arrivee_bateaux)
+        result = np.random.exponential(moyenne_inter_arrivee_bateaux)
         result_sec = result * 3600
         return result_sec
 
     # Fonction de temps de déchargement des bateaux
     def decharging_time_boat(number_robots):
         time_with_n_robots = dict_temps_dechargement.get(number_robots)
-        result = numpy.random.exponential(time_with_n_robots)
+        result = np.random.exponential(time_with_n_robots)
         result_sec = result * 3600
         return result_sec
 
