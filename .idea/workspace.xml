@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="750355c7-b876-4a18-a767-e27976c08c0c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TP1.2/simulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/TP1.2/simulation.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,7 +79,8 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "WebServerToolWindowFactoryState": "false"
+    "WebServerToolWindowFactoryState": "false",
+    "python.debugger.dataview.autoresize": "false"
   }
 }]]></component>
   <component name="RunManager" selected="Python.main">
@@ -225,8 +226,8 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.main" />
-        <item itemvalue="Python.simulation (2)" />
         <item itemvalue="Python.simulation (1)" />
+        <item itemvalue="Python.simulation (2)" />
         <item itemvalue="Python.simulation" />
         <item itemvalue="Python.simulation" />
       </list>
@@ -245,7 +246,7 @@
       <updated>1652551143487</updated>
       <workItem from="1652986011503" duration="17080000" />
       <workItem from="1653012073926" duration="7147000" />
-      <workItem from="1653081893771" duration="6330000" />
+      <workItem from="1653081893771" duration="9707000" />
     </task>
     <servers />
   </component>
@@ -306,7 +307,8 @@
     <SUITE FILE_PATH="coverage/simulation_py$main__2_.coverage" NAME="main (2) Coverage Results" MODIFIED="1652986336073" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Malek" />
     <SUITE FILE_PATH="coverage/simulation_py$SimPy.coverage" NAME="SimPy Coverage Results" MODIFIED="1652986537006" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Malek" />
     <SUITE FILE_PATH="coverage/simulation_py$simulation.coverage" NAME="simulation Coverage Results" MODIFIED="1652991449164" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/TP1.2" />
-    <SUITE FILE_PATH="coverage/main_py$main.coverage" NAME="main Coverage Results" MODIFIED="1653102387006" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/TP1.2" />
+    <SUITE FILE_PATH="coverage/main_py$simulation__1_.coverage" NAME="simulation (1) Coverage Results" MODIFIED="1653106489563" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/TP1.2" />
+    <SUITE FILE_PATH="coverage/main_py$main.coverage" NAME="main Coverage Results" MODIFIED="1653106516608" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/TP1.2" />
     <SUITE FILE_PATH="coverage/main_py$simulation__2_.coverage" NAME="simulation (2) Coverage Results" MODIFIED="1653102243646" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/TP1.1" />
     <SUITE FILE_PATH="coverage/simulation_py$main.coverage" NAME="main Coverage Results" MODIFIED="1653058459546" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/TP1.2" />
     <SUITE FILE_PATH="coverage/simulation_py$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1652986167341" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/TP1.1" />

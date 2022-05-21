@@ -15,6 +15,7 @@ def simuler_port(nb_robots):
     arrivees, departs = [], []
     temps_dans_file, temps_dans_systeme = [], []
     temps_de_file, longueur_de_file = [], []
+    entre_file, sortie_file = [], []
 
     # Fonction de temps d'inter arrivée des bateaux
     def inter_arrival_time_boat():
@@ -51,10 +52,13 @@ def simuler_port(nb_robots):
         with file_attente.request() as req:
             print('%3d entre dans la file à at %.2f' %
                   (numero_bateau, env.now))
+
             temps_entre_file = env.now
             longueur = len(file_attente.queue)
             temps_de_file.append(temps_entre_file)
             longueur_de_file.append(longueur)
+            entre_file.append(temps_entre_file)
+
             yield req
             print('%3d accède au chargement/déchargement à %.2f' %
                   (numero_bateau, env.now))
@@ -62,6 +66,7 @@ def simuler_port(nb_robots):
             longueur = len(file_attente.queue)
             temps_de_file.append(temps_sortie_file)
             longueur_de_file.append(longueur)
+            sortie_file.append(temps_sortie_file)
 
             # Distribution exponentielle du temps de déchargement
             temps_dechargement = decharging_time_boat(nb_robots)
@@ -88,7 +93,7 @@ def simuler_port(nb_robots):
 
     def avg_line(df_length):
         # Nombre de bateaux moyen dans la file d'attente
-        df_length['delta_time'] = df_length['time'].shift(-1) - df_length['time']
+        df_length['delta_time'] = df_length['temps'].shift(-1) - df_length['temps']
         df_length = df_length[0:-1]
         avg = np.average(df_length['longueur_file'],weights=df_length['delta_time'])
         return avg
@@ -97,29 +102,37 @@ def simuler_port(nb_robots):
     def server_utilization(df_length):
         # Utilisation de la file
         sum_server_free = df_length[df_length['longueur_file']==0] ['delta_time'].sum()
-        first_event =  df_length['time'].iloc[0]
+        first_event = df_length['temps'].iloc[0]
         sum_server_free = sum_server_free + first_event
         utilization = round((1 - sum_server_free / temps_simulation) * 100, 2)
         return utilization
 
 
-    df1 = pd.DataFrame(temps_de_file, columns=['time'])
+    df1 = pd.DataFrame(temps_de_file, columns=['temps'])
     df2 = pd.DataFrame(longueur_de_file, columns=['longueur_file'])
     df_resultats1 = pd.concat([df1, df2], axis=1)
 
-    df_resultats1['temps_heure'] = df_resultats1['time'] / (60 * 60)
+    df_resultats1['temps_heure'] = df_resultats1['temps'] / (60 * 60)
     df_resultats1['moyenne_cumulative_longueur_file'] = df_resultats1['longueur_file'].expanding().mean()
     df_resultats1['delta_time'] = df_resultats1['temps_heure'].shift(-1) - df_resultats1['temps_heure']
-    df_resultats1['moyenne_cumulative_occupation_quai'] = round((1 - ((df_resultats1[df_resultats1['longueur_file'] == 0] ['delta_time'].cumsum()) / df_resultats1['temps_heure'])) * 100, 2).expanding().mean()
 
     df3 = pd.DataFrame(temps_dans_file, columns=['temps_dans_file'])
     df4 = pd.DataFrame(departs, columns=['departs'])
     df_resultats2 = pd.concat([df4, df3], axis=1)
 
     df_resultats2['departs_heure'] = df_resultats2['departs'] / (60 * 60)
-    df_resultats2['moyenne_cumulative_temps_file'] = df_resultats2['temps_dans_file'].expanding().mean()
+    df_resultats2['temps_dans_file_heure'] = df_resultats2['temps_dans_file'] / (60*60)
+    df_resultats2['moyenne_cumulative_temps_file'] = df_resultats2['temps_dans_file_heure'].expanding().mean()
     df_resultats2['nombre_bateaux_partis'] = df_resultats2.index + 1
     df_resultats2['ratio_dechargement'] = df_resultats2['nombre_bateaux_partis'] / df_resultats2['departs_heure']
+
+    df5 = pd.DataFrame(entre_file, columns=['entre_file'])
+    df6 = pd.DataFrame(sortie_file, columns=['sortie_file'])
+    df_resultats3 = pd.concat([df5, df6], axis=1)
+
+    # df_resultats3['temps_sans_bateau'] = np.where((df_resultats3['entre_file'] == df_resultats3['sortie_file']),df_resultats3['entre_file'] - df_resultats3['sortie_file'].shift(1))
+
+    df_resultats3.to_csv('test.csv')
 
     df_3 = pd.DataFrame(arrivees, columns=['arrivées'])
     df_4 = pd.DataFrame(departs, columns=['départs'])
@@ -150,9 +163,9 @@ def simuler_port(nb_robots):
     plt.title('Moyenne cumulative du temps d\'attente dans la file')
     plt.axvline(x = 20000, color = 'r', label = 'axvline - full height')
 
-    plt.figure(4)
-    plt.plot(df_resultats1['temps_heure'], df_resultats1['moyenne_cumulative_occupation_quai'])
-    plt.title('Moyenne cumulative du taux d\'occupation du quai')
-    plt.axvline(x = 20000, color = 'r', label = 'axvline - full height')
+    # plt.figure(4)
+    # plt.plot(df_resultats1['temps_heure'], df_resultats1['moyenne_cumulative_occupation_quai'])
+    # plt.title('Moyenne cumulative du taux d\'occupation du quai')
+    # plt.axvline(x = 20000, color = 'r', label = 'axvline - full height')
 
     plt.show()
