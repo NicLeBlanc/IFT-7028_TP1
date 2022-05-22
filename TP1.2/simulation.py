@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+nombre_robots = [2, 3, 6, 8, 13]
 
 def simuler_port(nb_robots):
     # Déclaration des variables / constantes
@@ -15,7 +16,7 @@ def simuler_port(nb_robots):
     arrivees, departs = [], []
     temps_dans_file, temps_dans_systeme = [], []
     temps_de_file, longueur_de_file = [], []
-    entre_file, sortie_file = [], []
+    temps_depart_liste, temps_quai_liste = [], []
 
     # Fonction de temps d'inter arrivée des bateaux
     def inter_arrival_time_boat():
@@ -57,7 +58,6 @@ def simuler_port(nb_robots):
             longueur = len(file_attente.queue)
             temps_de_file.append(temps_entre_file)
             longueur_de_file.append(longueur)
-            entre_file.append(temps_entre_file)
 
             yield req
             print('%3d accède au chargement/déchargement à %.2f' %
@@ -66,7 +66,6 @@ def simuler_port(nb_robots):
             longueur = len(file_attente.queue)
             temps_de_file.append(temps_sortie_file)
             longueur_de_file.append(longueur)
-            sortie_file.append(temps_sortie_file)
 
             # Distribution exponentielle du temps de déchargement
             temps_dechargement = decharging_time_boat(nb_robots)
@@ -76,6 +75,11 @@ def simuler_port(nb_robots):
             print('%3d part du port à %.2f' % (numero_bateau, temps_depart))
             departs.append(temps_depart)
             temps_systeme = temps_depart - temps_arrive
+            temps_quai = temps_depart - temps_sortie_file
+            # Calcul KPI #4
+            temps_depart_liste.append(temps_depart)
+            temps_quai_liste.append(temps_quai)
+
             temps_dans_systeme.append(temps_systeme)
             temps_file = temps_sortie_file - temps_entre_file
             temps_dans_file.append(temps_file)
@@ -126,13 +130,11 @@ def simuler_port(nb_robots):
     df_resultats2['nombre_bateaux_partis'] = df_resultats2.index + 1
     df_resultats2['ratio_dechargement'] = df_resultats2['nombre_bateaux_partis'] / df_resultats2['departs_heure']
 
-    df5 = pd.DataFrame(entre_file, columns=['entre_file'])
-    df6 = pd.DataFrame(sortie_file, columns=['sortie_file'])
+    df5 = pd.DataFrame(temps_depart_liste, columns=['temps_depart'])
+    df6 = pd.DataFrame(temps_quai_liste, columns=['temps_quai'])
     df_resultats3 = pd.concat([df5, df6], axis=1)
-
-    # df_resultats3['temps_sans_bateau'] = np.where((df_resultats3['entre_file'] == df_resultats3['sortie_file']),df_resultats3['entre_file'] - df_resultats3['sortie_file'].shift(1))
-
-    df_resultats3.to_csv('test.csv')
+    df_resultats3['temps_depart_heure'] = df_resultats3['temps_depart'] / (60 * 60)
+    df_resultats3['taux_occupation'] = df_resultats3['temps_quai'].cumsum() / df_resultats3['temps_depart']
 
     df_3 = pd.DataFrame(arrivees, columns=['arrivées'])
     df_4 = pd.DataFrame(departs, columns=['départs'])
@@ -163,9 +165,15 @@ def simuler_port(nb_robots):
     plt.title('Moyenne cumulative du temps d\'attente dans la file')
     plt.axvline(x = 20000, color = 'r', label = 'axvline - full height')
 
-    # plt.figure(4)
-    # plt.plot(df_resultats1['temps_heure'], df_resultats1['moyenne_cumulative_occupation_quai'])
-    # plt.title('Moyenne cumulative du taux d\'occupation du quai')
-    # plt.axvline(x = 20000, color = 'r', label = 'axvline - full height')
+    plt.figure(4)
+    plt.plot(df_resultats3['temps_depart_heure'], df_resultats3['taux_occupation'])
+    plt.title('Taux d\'occupation du quai')
+    plt.axvline(x = 20000, color = 'r', label = 'axvline - full height')
 
     plt.show()
+
+
+def replications_simu(nb_replications):
+    for x in nombre_robots:
+        for k in range(nb_replications):
+            simuler_port(x)
