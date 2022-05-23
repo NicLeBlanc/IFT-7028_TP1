@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 
 nombre_robots = [2, 3, 6, 8, 13]
 
-def simuler_port(nb_robots):
+def simuler_port(nb_robots, periode_rechauffement):
     # Déclaration des variables / constantes
     capacite_dechargement = 1
-    temps_simulation = 40000 * 60 * 60
+    temps_simulation = 40000 * 60 * 60 + (periode_rechauffement * 60 * 60)
     moyenne_inter_arrivee_bateaux = 12  # Temps inter arrivé des bateaux (en heures)
     dict_temps_dechargement = {2: 9.5, 3: 8, 6: 4.5, 8: 3.5, 13: 1.5}
 
@@ -95,21 +95,12 @@ def simuler_port(nb_robots):
     env.run(until=temps_simulation)
 
 
-    def avg_line(df_length):
+    def avg_line(df_results):
         # Nombre de bateaux moyen dans la file d'attente
-        df_length['delta_time'] = df_length['temps'].shift(-1) - df_length['temps']
-        df_length = df_length[0:-1]
-        avg = np.average(df_length['longueur_file'],weights=df_length['delta_time'])
+        df_results['delta_time'] = df_results['temps'].shift(-1) - df_results['temps']
+        df_length = df_results[0:-1]
+        avg = np.average(df_length['longueur_file'], weights=df_length['delta_time'])
         return avg
-
-
-    def server_utilization(df_length):
-        # Utilisation de la file
-        sum_server_free = df_length[df_length['longueur_file']==0] ['delta_time'].sum()
-        first_event = df_length['temps'].iloc[0]
-        sum_server_free = sum_server_free + first_event
-        utilization = round((1 - sum_server_free / temps_simulation) * 100, 2)
-        return utilization
 
 
     df1 = pd.DataFrame(temps_de_file, columns=['temps'])
@@ -136,44 +127,55 @@ def simuler_port(nb_robots):
     df_resultats3['temps_depart_heure'] = df_resultats3['temps_depart'] / (60 * 60)
     df_resultats3['taux_occupation'] = df_resultats3['temps_quai'].cumsum() / df_resultats3['temps_depart']
 
-    df_3 = pd.DataFrame(arrivees, columns=['arrivées'])
-    df_4 = pd.DataFrame(departs, columns=['départs'])
-
-    avg_length = avg_line(df_resultats1)
-    utilization = server_utilization(df_resultats1)
-    avg_delay_inqueue = np.mean(temps_dans_file)
-    avg_delay_insyst = np.mean(temps_dans_systeme)
+    avg_bateaux_decharges = df_resultats2['ratio_dechargement'].mean()
+    avg_longueur_file = avg_line(df_resultats1)
+    avg_temps_file = np.mean(temps_dans_file) / (60 * 60)
+    avg_taux_occupation = (df_resultats3['taux_occupation'].mean() * 100)
 
     print('  ')
-    print('Le temps d\'attente moyen dans la file est de %.2f' % (avg_delay_inqueue))
-    print('The average delay in system is %.2f' % (avg_delay_insyst))
-    print('Le nombre moyen de bateaux dans la file est de %.2f' %  (avg_length))
-    print('L\'utilisation de la file est de %.2f' % (utilization))
+    print('------')
+    print('Le nombre moyen de bateaux déchargés par heure est de {:.2f}'.format(avg_bateaux_decharges))
+    print('Le nombre moyen de bateaux dans la file est de {:.2f}'.format(avg_longueur_file))
+    print('Le temps d\'attente moyen dans la file est de {:.2f} heures'.format(avg_temps_file))
+    print('Le taux d\'occupation moyen du quai est de {:.2f} %'.format(avg_taux_occupation))
+    print('------')
+
+    # print('------')
+    # print('Le nombre moyen de bateaux déchargés par heure est de {:.2f}'.format(avg_bateaux_decharges))
+    # print('Le nombre moyen de bateaux dans la file est de {:.2f}'.format(avg_longueur_file))
+    # print('Le temps d\'attente moyen dans la file est de {:.2f} heures'.format(avg_temps_file))
+    # print('Le taux d\'occupation moyen du quai est de {:.2f} %'.format(avg_taux_occupation))
+    # print('------')
+
+    print('  ')
 
     plt.figure(1)
     plt.plot(df_resultats2['departs_heure'], df_resultats2['ratio_dechargement'])
     plt.title('Nombre de bateaux déchargés par heure')
-    plt.axvline(x = 20000, color = 'r', label = 'axvline - full height')
+    plt.axvline(x=periode_rechauffement, color='r', label='axvline - full height')
 
     plt.figure(2)
     plt.plot(df_resultats1['temps_heure'], df_resultats1['moyenne_cumulative_longueur_file'])
     plt.title('Moyenne cumulative de la longueur de la file')
-    plt.axvline(x = 20000, color = 'r', label = 'axvline - full height')
+    plt.axvline(x=periode_rechauffement, color='r', label='axvline - full height')
 
     plt.figure(3)
     plt.plot(df_resultats2['departs_heure'], df_resultats2['moyenne_cumulative_temps_file'])
     plt.title('Moyenne cumulative du temps d\'attente dans la file')
-    plt.axvline(x = 20000, color = 'r', label = 'axvline - full height')
+    plt.axvline(x=periode_rechauffement, color='r', label='axvline - full height')
 
     plt.figure(4)
     plt.plot(df_resultats3['temps_depart_heure'], df_resultats3['taux_occupation'])
     plt.title('Taux d\'occupation du quai')
-    plt.axvline(x = 20000, color = 'r', label = 'axvline - full height')
+    plt.axvline(x=periode_rechauffement, color='r', label='axvline - full height')
 
     plt.show()
 
 
-def replications_simu(nb_replications):
-    for x in nombre_robots:
-        for k in range(nb_replications):
-            simuler_port(x)
+def replications_simu(nb_replications, nb_robots, periode_rechauffement):
+    for k in range(nb_replications):
+        replication = k+1
+        print('Réplication #{}/{} pour le scénario avec {} robots'.format(replication, nb_replications, nb_robots))
+        print(' ')
+        simuler_port(nb_robots, periode_rechauffement)
+

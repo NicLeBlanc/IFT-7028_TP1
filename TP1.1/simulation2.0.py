@@ -27,6 +27,7 @@ evenement = 0
 
 #at event zero time is also zero
 time_ = 0
+
 #create counters for arrived and served customers
 arrived_customers = 0
 served_customers = 0
