@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 np.random.seed(2022)
-inter_arrival = 12*60
-service_t = 9.5 * 60# POUR 2 ROBOTS POUR LE MOMENT
+inter_arrival = 12
+service_t = 9.5 # POUR 2 ROBOTS POUR LE MOMENT
 event = 0
-horizon = 40000 * 60
+horizon = 40000
 
 departure_time = 0
 
@@ -158,13 +158,13 @@ print(bateaux_df)
 
 #plots
 #KPI 1
-# plt.figure(1)
-# plt.plot(bateaux_df['departure time'], bateaux_df['ratio_dechargement'])
-# plt.title('Nombre de bateaux déchargés par heure')
+plt.figure(1)
+plt.plot(bateaux_df['departure time'], bateaux_df['ratio_dechargement'])
+plt.title('Nombre de bateaux déchargés par heure')
 
 
 plt.figure(2)
-plt.plot(time_series['time'],time_series['queue'].expanding().mean())
+plt.plot(time_series['time'],time_series['queue'])
 plt.title('Moyenne cummulative des bateaux dans la queue')
 plt.axvline(x=20000, color='r', label='axvline - full height')
 
@@ -173,5 +173,7 @@ plt.figure(3)
 plt.plot(bateaux_df['departure time'],bateaux_df['time in queue'].expanding().mean())
 plt.title('Moyenne cummulative de temps d attente des bateaux dans la queue')
 plt.axvline(x=20000, color='r', label='axvline - full height')
-
+#
 plt.show()
+
+# time_series.to_csv (r'C:\Users\mnaimi\Documents\GitHub\IFT-7028_TP1\TP1.1\time_series.csv', index = False, header=True)
