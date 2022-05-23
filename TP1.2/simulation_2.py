@@ -160,24 +160,32 @@ def simuler_port(nb_robots, periode_rechauffement):
     plt.title('Nombre de bateaux déchargés par heure')
     plt.axvline(x=periode_rechauffement, color='r', label='axvline - full height')
     plt.xlim(0, temps_simulation_heure)
+    plt.xlabel("Temps (h)")
+    plt.ylabel("Nombre de bateaux déchargés par heure (bateaux)")
 
     plt.figure(2)
     plt.plot(df_resultats1['temps_heure'], df_resultats1['moyenne_cumulative_longueur_file'])
     plt.title('Moyenne cumulative de la longueur de la file')
     plt.axvline(x=periode_rechauffement, color='r', label='axvline - full height')
     plt.xlim(0, temps_simulation_heure)
+    plt.xlabel("Temps (h)")
+    plt.ylabel("Longueur de la file (bateaux)")
 
     plt.figure(3)
     plt.plot(df_resultats2['departs_heure'], df_resultats2['moyenne_cumulative_temps_file'])
     plt.title('Moyenne cumulative du temps d\'attente dans la file')
     plt.axvline(x=periode_rechauffement, color='r', label='axvline - full height')
     plt.xlim(0, temps_simulation_heure)
+    plt.xlabel("Temps (h)")
+    plt.ylabel("Temps d'attente dans la file (h)")
 
     plt.figure(4)
     plt.plot(df_resultats3['temps_depart_heure'], df_resultats3['taux_occupation'])
     plt.title('Taux d\'occupation du quai')
     plt.axvline(x=periode_rechauffement, color='r', label='axvline - full height')
     plt.xlim(0, temps_simulation_heure)
+    plt.xlabel("Temps (h)")
+    plt.ylabel("Taux d'occupation (%)")
 
     plt.show()
 
@@ -193,5 +201,4 @@ def replications_simu(nb_replications, nb_robots, periode_rechauffement):
         kpi = simuler_port(nb_robots, periode_rechauffement)
         list_kpi = list(kpi)
         df_resultats.loc[k] = ['replication' + str(replication)] + list_kpi
-        df_resultats.to_csv(r'./resultats_2/resultats_scenario_{}_robots'.format(nb_robots))
-
+        df_resultats.to_csv(r'./resultats_2/resultats_scenario_{}_robots.csv'.format(nb_robots), index=False)
