@@ -9,6 +9,7 @@ def simuler_port(nb_robots, periode_rechauffement):
     # Déclaration des variables / constantes
     capacite_dechargement = 1
     temps_simulation = 40000 * 60 * 60 + (periode_rechauffement * 60 * 60)
+    temps_simulation_heure = temps_simulation / (60 * 60)
     moyenne_inter_arrivee_bateaux = 12  # Temps inter arrivé des bateaux (en heures)
     dict_temps_dechargement = {2: 9.5, 3: 8, 6: 4.5, 8: 3.5, 13: 1.5}
 
@@ -153,21 +154,25 @@ def simuler_port(nb_robots, periode_rechauffement):
     plt.plot(df_resultats2['departs_heure'], df_resultats2['ratio_dechargement'])
     plt.title('Nombre de bateaux déchargés par heure')
     plt.axvline(x=periode_rechauffement, color='r', label='axvline - full height')
+    plt.xlim(0, temps_simulation_heure)
 
     plt.figure(2)
     plt.plot(df_resultats1['temps_heure'], df_resultats1['moyenne_cumulative_longueur_file'])
     plt.title('Moyenne cumulative de la longueur de la file')
     plt.axvline(x=periode_rechauffement, color='r', label='axvline - full height')
+    plt.xlim(0, temps_simulation_heure)
 
     plt.figure(3)
     plt.plot(df_resultats2['departs_heure'], df_resultats2['moyenne_cumulative_temps_file'])
     plt.title('Moyenne cumulative du temps d\'attente dans la file')
     plt.axvline(x=periode_rechauffement, color='r', label='axvline - full height')
+    plt.xlim(0, temps_simulation_heure)
 
     plt.figure(4)
     plt.plot(df_resultats3['temps_depart_heure'], df_resultats3['taux_occupation'])
     plt.title('Taux d\'occupation du quai')
     plt.axvline(x=periode_rechauffement, color='r', label='axvline - full height')
+    plt.xlim(0, temps_simulation_heure)
 
     plt.show()
 

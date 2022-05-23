@@ -56,6 +56,7 @@ while time_ <= horizon:
             service_time = np.random.exponential(service_t)
             departure_time = time_ + service_time
             depart_bateaux += 1
+
             #UPDATE DATAFRAME
             generated_events = pd.DataFrame([
                 [99, float(departure_time), "departure", 0, 0, 0, depart_bateaux],
@@ -101,7 +102,7 @@ while time_ <= horizon:
             queue -= 1
             server_status = "occupé"
 
-            service_time = np.random.exponential(service_time)
+            service_time = np.random.exponential(service_t)
             departure_time = time_ + service_time
             depart_bateaux += 1
 
@@ -117,8 +118,7 @@ while time_ <= horizon:
 
             event += 1
 
-
-    if next_arrival_time < departure_time :
+    if next_arrival_time < departure_time:
         server_status = "occupé"
     else:
         server_status = "libre"
@@ -126,13 +126,13 @@ while time_ <= horizon:
 #Collecte de données pour les indicateurs
 
 #arrivé des bateaux
-arrivals = time_series.loc[time_series['type'] == 'arrival', ['time', 'arr bateaux' ]]
+arrivals = time_series.loc[time_series['type'] == 'arrival', ['time', 'arr bateaux']]
 arrivals.columns = ['time', 'bateaux']
 #depart des bateaux
-depature = time_series.loc[time_series['type'] == 'departure', ['time', 'depart bateaux' ]]
+depature = time_series.loc[time_series['type'] == 'departure', ['time', 'depart bateaux']]
 depature.columns = ['time', 'bateaux']
 #bateaux déchargé
-serving = time_series.loc[time_series['decharged bateaux'] != 0 , ['time', 'decharged bateaux' ]]
+serving = time_series.loc[time_series['decharged bateaux'] != 0, ['time', 'decharged bateaux']]
 serving.columns = ['time', 'bateaux']
 
 #merge
