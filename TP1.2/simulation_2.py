@@ -119,6 +119,7 @@ def simuler_port(nb_robots, periode_rechauffement):
     df_resultats2['departs_heure'] = df_resultats2['departs'] / (60 * 60)
     df_resultats2['temps_dans_file_heure'] = df_resultats2['temps_dans_file'] / (60*60)
     df_resultats2['moyenne_cumulative_temps_file'] = df_resultats2['temps_dans_file_heure'].expanding().mean()
+
     df_resultats2['nombre_bateaux_partis'] = df_resultats2.index + 1
     df_resultats2['ratio_dechargement'] = df_resultats2['nombre_bateaux_partis'] / df_resultats2['departs_heure']
 
