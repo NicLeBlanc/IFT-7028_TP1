@@ -142,13 +142,17 @@ def simuler_port(nb_robots, periode_rechauffement):
     print('Le taux d\'occupation moyen du quai est de {:.2f} %'.format(avg_taux_occupation))
     print('------')
 
+    kpi1_convergence = df_resultats2['ratio_dechargement'].iloc[-1]
+    kpi2_convergence = df_resultats1['moyenne_cumulative_longueur_file'].iloc[-1]
+    kpi3_convergence = df_resultats2['moyenne_cumulative_temps_file'].iloc[-1]
+    kpi4_convergence = df_resultats3['taux_occupation'].iloc[-1]
+
     # print('------')
     # print('Le nombre moyen de bateaux déchargés par heure est de {:.2f}'.format(avg_bateaux_decharges))
     # print('Le nombre moyen de bateaux dans la file est de {:.2f}'.format(avg_longueur_file))
     # print('Le temps d\'attente moyen dans la file est de {:.2f} heures'.format(avg_temps_file))
     # print('Le taux d\'occupation moyen du quai est de {:.2f} %'.format(avg_taux_occupation))
     # print('------')
-
     print('  ')
 
     plt.figure(1)
@@ -177,11 +181,17 @@ def simuler_port(nb_robots, periode_rechauffement):
 
     plt.show()
 
+    return kpi1_convergence, kpi2_convergence, kpi3_convergence, kpi4_convergence
+
 
 def replications_simu(nb_replications, nb_robots, periode_rechauffement):
+    df_resultats = pd.DataFrame(columns=['replication', 'kpi1', 'kpi2', 'kpi3', 'kpi4'])
     for k in range(nb_replications):
         replication = k+1
         print('Réplication #{}/{} pour le scénario avec {} robots'.format(replication, nb_replications, nb_robots))
         print(' ')
-        simuler_port(nb_robots, periode_rechauffement)
+        kpi = simuler_port(nb_robots, periode_rechauffement)
+        list_kpi = list(kpi)
+        df_resultats.loc[k] = ['replication' + str(replication)] + list_kpi
+        df_resultats.to_csv(r'./resultats_2/resultats_scenario_{}_robots'.format(nb_robots))
 
