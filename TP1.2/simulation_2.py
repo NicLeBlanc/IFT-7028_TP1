@@ -3,6 +3,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
+
 nombre_robots = [2, 3, 6, 8, 13]
 
 def simuler_port(nb_robots, periode_rechauffement):
@@ -53,7 +56,7 @@ def simuler_port(nb_robots, periode_rechauffement):
     def dechargement_bateau(env, no_dechargement, nb_robots, numero_bateau, temps_arrive):
         with file_attente.request() as req:
             print('%3d entre dans la file à at %.2f' %
-                  (numero_bateau, env.now))
+                  (numero_bateau, env.now / (60*60)))
 
             temps_entre_file = env.now
             longueur = len(file_attente.queue)
@@ -62,7 +65,7 @@ def simuler_port(nb_robots, periode_rechauffement):
 
             yield req
             print('%3d accède au chargement/déchargement à %.2f' %
-                  (numero_bateau, env.now))
+                  (numero_bateau, env.now / (60*60)))
             temps_sortie_file = env.now
             longueur = len(file_attente.queue)
             temps_de_file.append(temps_sortie_file)
@@ -73,7 +76,7 @@ def simuler_port(nb_robots, periode_rechauffement):
 
             yield env.timeout(temps_dechargement)
             temps_depart = env.now
-            print('%3d part du port à %.2f' % (numero_bateau, temps_depart))
+            print('%3d part du port à %.2f' % (numero_bateau, temps_depart / (60*60)))
             departs.append(temps_depart)
             temps_systeme = temps_depart - temps_arrive
             temps_quai = temps_depart - temps_sortie_file
@@ -134,26 +137,26 @@ def simuler_port(nb_robots, periode_rechauffement):
     avg_temps_file = np.mean(temps_dans_file) / (60 * 60)
     avg_taux_occupation = (df_resultats3['taux_occupation'].mean() * 100)
 
-    print('  ')
-    print('------')
-    print('Le nombre moyen de bateaux déchargés par heure est de {:.2f}'.format(avg_bateaux_decharges))
-    print('Le nombre moyen de bateaux dans la file est de {:.2f}'.format(avg_longueur_file))
-    print('Le temps d\'attente moyen dans la file est de {:.2f} heures'.format(avg_temps_file))
-    print('Le taux d\'occupation moyen du quai est de {:.2f} %'.format(avg_taux_occupation))
-    print('------')
-
     kpi1_convergence = df_resultats2['ratio_dechargement'].iloc[-1]
     kpi2_convergence = df_resultats1['moyenne_cumulative_longueur_file'].iloc[-1]
     kpi3_convergence = df_resultats2['moyenne_cumulative_temps_file'].iloc[-1]
     kpi4_convergence = df_resultats3['taux_occupation'].iloc[-1]
 
+    # print('  ')
     # print('------')
     # print('Le nombre moyen de bateaux déchargés par heure est de {:.2f}'.format(avg_bateaux_decharges))
     # print('Le nombre moyen de bateaux dans la file est de {:.2f}'.format(avg_longueur_file))
     # print('Le temps d\'attente moyen dans la file est de {:.2f} heures'.format(avg_temps_file))
     # print('Le taux d\'occupation moyen du quai est de {:.2f} %'.format(avg_taux_occupation))
     # print('------')
-    print('  ')
+    # print('  ')
+
+    print('------')
+    print('Le nombre de bateaux déchargés par heure sur l\'horizon de simulation est de {:.2f}'.format(kpi1_convergence))
+    print('Le nombre bateaux dans la file sur l\'horizon de simulation est de {:.2f}'.format(kpi2_convergence))
+    print('Le temps d\'attente dans la file sur l\'horizon de simulation est de {:.2f} heures'.format(kpi3_convergence))
+    print('Le taux d\'occupation du quai sur l\'horizon de simulation est de {:.2f} %'.format(kpi4_convergence))
+    print('------')
 
     plt.figure(1)
     plt.plot(df_resultats2['departs_heure'], df_resultats2['ratio_dechargement'])

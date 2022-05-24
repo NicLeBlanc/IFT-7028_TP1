@@ -44,6 +44,7 @@ def simuler_port(nb_robots, periode_rechauffement):
     file = 0
     bateaux_arrives += 1
     evenement += 1
+    print('%3d arrive au port à %.2f' % (bateaux_arrives, prochain_temps_arrivee / (60*60)))
 
     # Créer le dataframe des résultats et le populer avec le premier évènement
     columns_df = ['evenement', 'temps', 'type_evenement', 'file', 'arrivee_bateau', 'bateau_decharge', 'depart_bateau']
@@ -65,11 +66,17 @@ def simuler_port(nb_robots, periode_rechauffement):
             temps_inter_arrivee = inter_arrival_time_boat()
             prochain_temps_arrivee = temps + temps_inter_arrivee
 
+            # Imprimer l'arrivée du bateau
+            print('%3d arrive au port à %.2f' % (bateaux_arrives, prochain_temps_arrivee / (60*60) ))
+
             # Si la file est vide, le bateau accède tout de suite à l'espace de déchargement
             if statut_quai == 'vide':
 
                 # Le bateau est déchargé et le compteur est incrémenté de 1
                 bateaux_decharges += 1
+
+                # Imprimer l'arrivée à la station de chargement / déchargement
+                print('%3d accède au chargement/déchargement à %.2f' % (bateaux_decharges, temps / (60*60)))
 
                 # Le bateau est ajouté à l'historique des bateaux déchargés
                 df_simu['bateau_decharge'].iloc[evenement-1] = bateaux_decharges
@@ -78,6 +85,9 @@ def simuler_port(nb_robots, periode_rechauffement):
                 temps_dechargement = decharging_time_boat(number_robots=nb_robots)
                 temps_depart = temps + temps_dechargement
                 bateaux_partis += 1
+
+                # Imprimer le départ du bateau
+                print('%3d part du port à %.2f' % (bateaux_partis, temps_depart / (60*60)))
 
                 # Ajouter l'évènement à l'historique
                 prochain_evenement = pd.DataFrame([[99, float(temps_depart), 'depart', 0, 0, 0, bateaux_partis], [99, float(prochain_temps_arrivee), 'arrivee', 0, bateaux_arrives, 0, 0]], columns=columns_df)
@@ -98,6 +108,9 @@ def simuler_port(nb_robots, periode_rechauffement):
 
                 # Le bateau est ajouté à la file et sa taille est incrémentée de 1
                 file += 1
+
+                # Imprimer l'arrivée dans la file
+                print('%3d entre dans la file à at %.2f' % (bateaux_arrives, prochain_temps_arrivee / (60*60)))
 
                 # Ajouter l'évènement à l'historique
                 prochain_evenement = pd.DataFrame([[1, float(prochain_temps_arrivee), 'arrivee', 0, bateaux_arrives, 0, 0]], columns=columns_df)
@@ -141,10 +154,15 @@ def simuler_port(nb_robots, periode_rechauffement):
                 # Le statut de l'emplacement reste 'occupe'
                 statut_quai = 'occupe'
 
+                print('%3d accède au chargement/déchargement à %.2f' % (bateaux_decharges, temps / (60*60)))
+
                 # Générer le prochain évènement (déchargement et moment de départ)
                 temps_dechargement = decharging_time_boat(number_robots=nb_robots)
                 temps_depart = temps + temps_dechargement
                 bateaux_partis += 1
+
+                # Imprimer le départ du bateau
+                print('%3d part du port à %.2f' % (bateaux_partis, temps_depart / (60*60)))
 
                 # Ajouter l'évènement à l'historique
                 prochain_evenement = pd.DataFrame([[99, float(temps_depart), 'depart', 0, 0, 0, bateaux_partis]], columns=columns_df)
@@ -195,7 +213,6 @@ def simuler_port(nb_robots, periode_rechauffement):
     # Réorganiser les colonnes
     df_bateaux = df_bateaux[['bateau', 'temps_arrivee', 'temps_dechargement', 'temps_depart']]
 
-
     # Bateaux déchargés par heure
     df_bateaux['departs_heure'] = df_bateaux['temps_depart'] / (60 * 60)
     df_bateaux['nombre_bateaux_partis'] = df_bateaux.index + 1
@@ -219,6 +236,13 @@ def simuler_port(nb_robots, periode_rechauffement):
     kpi2_convergence = df_file['moyenne_cumulative_longueur_file'].iloc[-1]
     kpi3_convergence = df_bateaux['moyenne_cumulative_temps_file'].iloc[-1]
     kpi4_convergence = df_bateaux['taux_occupation'].iloc[-1]
+
+    print('------')
+    print('Le nombre de bateaux déchargés par heure sur l\'horizon de simulation est de {:.2f}'.format(kpi1_convergence))
+    print('Le nombre bateaux dans la file sur l\'horizon de simulation est de {:.2f}'.format(kpi2_convergence))
+    print('Le temps d\'attente dans la file sur l\'horizon de simulation est de {:.2f} heures'.format(kpi3_convergence))
+    print('Le taux d\'occupation du quai sur l\'horizon de simulation est de {:.2f} %'.format(kpi4_convergence))
+    print('------')
 
     plt.figure(1)
     plt.plot(df_bateaux['departs_heure'], df_bateaux['ratio_dechargement'])
