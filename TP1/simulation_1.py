@@ -1,3 +1,7 @@
+##############################################################################
+# Avec l'aide de l'exemple de Paul Rivera : https://gist.github.com/paul90hn #
+##############################################################################
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -241,7 +245,7 @@ def simuler_port(nb_robots, periode_rechauffement):
     print('Le nombre de bateaux déchargés par heure sur l\'horizon de simulation est de {:.2f}'.format(kpi1_convergence))
     print('Le nombre bateaux dans la file sur l\'horizon de simulation est de {:.2f}'.format(kpi2_convergence))
     print('Le temps d\'attente dans la file sur l\'horizon de simulation est de {:.2f} heures'.format(kpi3_convergence))
-    print('Le taux d\'occupation du quai sur l\'horizon de simulation est de {:.2f} %'.format(kpi4_convergence))
+    print('Le taux d\'occupation du quai sur l\'horizon de simulation est de {:.2f} %'.format(kpi4_convergence*100))
     print('------')
 
     plt.figure(1)

@@ -1,3 +1,7 @@
+###############################################################################################################################
+# Avec l'aide de l'exemple de Dario Weitz : https://towardsdatascience.com/introduction-to-simulation-with-simpy-322606d4ba0c #
+###############################################################################################################################
+
 import simpy
 import pandas as pd
 import numpy as np
@@ -47,7 +51,7 @@ def simuler_port(nb_robots, periode_rechauffement):
             temps_arrive = env.now
             arrivees.append(temps_arrive)
             id_prochain_bateau += 1
-            print('%3d arrive au port à %.2f' % (id_prochain_bateau, env.now))
+            print('%3d arrive au port à %.2f' % (id_prochain_bateau, env.now / (60*60)))
 
             env.process(dechargement_bateau(env, no_dechargement, nb_robots,
                                             id_prochain_bateau, temps_arrive))
@@ -98,15 +102,6 @@ def simuler_port(nb_robots, periode_rechauffement):
     # Rouler la simulation
     env.run(until=temps_simulation)
 
-
-    def avg_line(df_results):
-        # Nombre de bateaux moyen dans la file d'attente
-        df_results['delta_time'] = df_results['temps'].shift(-1) - df_results['temps']
-        df_length = df_results[0:-1]
-        avg = np.average(df_length['longueur_file'], weights=df_length['delta_time'])
-        return avg
-
-
     df1 = pd.DataFrame(temps_de_file, columns=['temps'])
     df2 = pd.DataFrame(longueur_de_file, columns=['longueur_file'])
     df_resultats1 = pd.concat([df1, df2], axis=1)
@@ -132,30 +127,16 @@ def simuler_port(nb_robots, periode_rechauffement):
     df_resultats3['temps_depart_heure'] = df_resultats3['temps_depart'] / (60 * 60)
     df_resultats3['taux_occupation'] = df_resultats3['temps_quai'].cumsum() / df_resultats3['temps_depart']
 
-    avg_bateaux_decharges = df_resultats2['ratio_dechargement'].mean()
-    avg_longueur_file = avg_line(df_resultats1)
-    avg_temps_file = np.mean(temps_dans_file) / (60 * 60)
-    avg_taux_occupation = (df_resultats3['taux_occupation'].mean() * 100)
-
     kpi1_convergence = df_resultats2['ratio_dechargement'].iloc[-1]
     kpi2_convergence = df_resultats1['moyenne_cumulative_longueur_file'].iloc[-1]
     kpi3_convergence = df_resultats2['moyenne_cumulative_temps_file'].iloc[-1]
     kpi4_convergence = df_resultats3['taux_occupation'].iloc[-1]
 
-    # print('  ')
-    # print('------')
-    # print('Le nombre moyen de bateaux déchargés par heure est de {:.2f}'.format(avg_bateaux_decharges))
-    # print('Le nombre moyen de bateaux dans la file est de {:.2f}'.format(avg_longueur_file))
-    # print('Le temps d\'attente moyen dans la file est de {:.2f} heures'.format(avg_temps_file))
-    # print('Le taux d\'occupation moyen du quai est de {:.2f} %'.format(avg_taux_occupation))
-    # print('------')
-    # print('  ')
-
     print('------')
     print('Le nombre de bateaux déchargés par heure sur l\'horizon de simulation est de {:.2f}'.format(kpi1_convergence))
     print('Le nombre bateaux dans la file sur l\'horizon de simulation est de {:.2f}'.format(kpi2_convergence))
     print('Le temps d\'attente dans la file sur l\'horizon de simulation est de {:.2f} heures'.format(kpi3_convergence))
-    print('Le taux d\'occupation du quai sur l\'horizon de simulation est de {:.2f} %'.format(kpi4_convergence))
+    print('Le taux d\'occupation du quai sur l\'horizon de simulation est de {:.2f} %'.format(kpi4_convergence * 100))
     print('------')
 
     plt.figure(1)
@@ -193,7 +174,6 @@ def simuler_port(nb_robots, periode_rechauffement):
     plt.show()
 
     return kpi1_convergence, kpi2_convergence, kpi3_convergence, kpi4_convergence
-
 
 def replications_simu(nb_replications, nb_robots, periode_rechauffement):
     df_resultats = pd.DataFrame(columns=['replication', 'kpi1', 'kpi2', 'kpi3', 'kpi4'])
